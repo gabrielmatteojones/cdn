@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DataWin — Gestionale</title>
+  <meta name="description" content="DataWin - gestionale per piccole attività, stile Bibliowin" />
+  <style>
+    :root{
+      --bg:#f8fafc; /* light */
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#0f766e; /* emerald-700 */
+      --accent-2:#0369a1; /* sky-700 */
+      --sidebar:#f1f5f9;
+      --border:#e6eef3;
+      --glass: rgba(255,255,255,0.6);
+      --radius:12px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--bg);color:#0f172a}
+
+    .app{display:flex;min-height:100vh}
+
+    /* Sidebar */
+    .sidebar{width:260px;background:linear-gradient(180deg,var(--sidebar),#fff);border-right:1px solid var(--border);padding:28px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{height:52px;width:52px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px}
+    .brand h1{margin:0;font-size:18px}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+
+    .nav{margin-top:26px}
+    .nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:#0f172a;text-decoration:none;font-size:14px;margin-bottom:6px}
+    .nav a:hover{background:rgba(3,105,161,0.06)}
+    .nav a.active{background:linear-gradient(90deg,rgba(3,105,161,0.08),rgba(15,118,110,0.06));border-left:3px solid var(--accent-2);padding-left:7px}
+
+    /* Main */
+    .main{flex:1;padding:24px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .search{flex:1;max-width:540px;margin-right:18px}
+    .search input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:linear-gradient(180deg,#fff,#fbfdff)}
+
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+    .col-span-4{grid-column:span 4}
+    .col-span-8{grid-column:span 8}
+    .col-span-12{grid-column:span 12}
+
+    .stat{display:flex;flex-direction:column;gap:6px}
+    .stat .num{font-size:22px;font-weight:700}
+    .stat .label{font-size:13px;color:var(--muted)}
+
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:10px 12px;border-bottom:1px solid #f1f5f9;text-align:left}
+    th{font-size:13px;color:var(--muted);font-weight:600}
+
+    .recent-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px}
+    .tag{padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(15,118,110,0.08);color:var(--accent)}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .sidebar{display:none}
+      .grid{grid-template-columns:repeat(6,1fr)}
+      .col-span-8{grid-column:span 6}
+      .col-span-4{grid-column:span 6}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <aside class="sidebar" aria-label="Sidebar">
+      <div class="brand">
+        <div class="logo">DW</div>
+        <div>
+          <h1>DataWin</h1>
+          <p>Gestionale per piccole attività</p>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#" class="active">🏠 Dashboard</a>
+        <a href="#">👥 Clienti</a>
+        <a href="#">📁 Progetti</a>
+        <a href="#">🧾 Fatture</a>
+        <a href="#">📅 Calendario</a>
+        <a href="#">⚙️ Impostazioni</a>
+      </nav>
+
+      <div style="margin-top:20px;font-size:13px;color:var(--muted)">
+        <strong>Versione</strong>
+        <div>DataWin 1.0</div>
+        <div style="margin-top:10px">© <span id="year"></span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex;flex:1;align-items:center">
+          <div class="search">
+            <input id="q" placeholder="Cerca clienti, progetti, fatture..." />
+          </div>
+          <button onclick="openNew()" style="padding:10px 14px;border-radius:10px;border:0;background:var(--accent);color:#fff;font-weight:600">+ Nuovo</button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="text-align:right">
+            <div style="font-weight:700">Benvenuto</div>
+            <div style="font-size:13px;color:var(--muted)">Amministratore</div>
+          </div>
+          <div style="width:44px;height:44px;border-radius:10px;background:var(--accent-2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700">A</div>
+        </div>
+      </div>
+
+      <section class="grid">
+        <div class="card col-span-4">
+          <h3 style="margin:0 0 10px 0">Statistiche rapide</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="card" style="padding:10px">
+              <div class="stat"><div class="num" id="clients-count">—</div><div class="label">Clienti attivi</div></div>
+            </div>
+            <div class="card" style="padding:10px">
+              <div class="stat"><div class="num" id="projects-count">—</div><div class="label">Progetti</div></div>
+            </div>
+            <div class="card" style="padding:10px">
+              <div class="stat"><div class="num" id="invoices-count">—</div><div class="label">Fatture aperte</div></div>
+            </div>
+            <div class="card" style="padding:10px">
+              <div class="stat"><div class="num" id="due-count">—</div><div class="label">Scadenze prossime</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card col-span-8">
+          <h3 style="margin:0 0 10px 0">Attività recenti</h3>
+          <div>
+            <div class="recent-item card" style="margin-bottom:8px">
+              <div>
+                <div style="font-weight:700">Ordine #4523</div>
+                <div style="font-size:13px;color:var(--muted)">Cliente: Rossi — 2025-08-01</div>
+              </div>
+              <div class="tag">Completato</div>
+            </div>
+
+            <div class="recent-item card" style="margin-bottom:8px">
+              <div>
+                <div style="font-weight:700">Fattura #221</div>
+                <div style="font-size:13px;color:var(--muted)">Cliente: Bianchi — 2025-08-03</div>
+              </div>
+              <div class="tag">Da pagare</div>
+            </div>
+
+            <div class="recent-item card">
+              <div>
+                <div style="font-weight:700">Incontro Progetto X</div>
+                <div style="font-size:13px;color:var(--muted)">Online — 2025-08-06</div>
+              </div>
+              <div class="tag">Prenotato</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card col-span-12">
+          <h3 style="margin:0 0 10px 0">Clienti</h3>
+          <div style="overflow:auto">
+            <table>
+              <thead>
+                <tr><th>Nome</th><th>Contatto</th><th>Ultima attività</th><th>Saldo</th></tr>
+              </thead>
+              <tbody id="clients-table">
+                <!-- rows inserted by JS -->
+              </tbody>
+            </table>
+          </div>
+          <footer>Mostrati i primi 10 clienti.</footer>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Demo data
+    const data = {
+      clients: [
+        {name:'Mario Rossi', contact:'mario@rossi.it', last:'2025-07-28', balance:'€0'},
+        {name:'Anna Bianchi', contact:'anna@bianchi.it', last:'2025-07-30', balance:'€120'},
+        {name:'Studio Verde', contact:'info@studioverde.it', last:'2025-08-02', balance:'€-50'},
+        {name:'Coop Alfa', contact:'segreteria@coopalfa.it', last:'2025-07-25', balance:'€300'},
+      ],
+      stats:{clients:128,projects:42,invoices:7,due:3}
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // populate stats
+    document.getElementById('clients-count').textContent = data.stats.clients;
+    document.getElementById('projects-count').textContent = data.stats.projects;
+    document.getElementById('invoices-count').textContent = data.stats.invoices;
+    document.getElementById('due-count').textContent = data.stats.due;
+
+    // populate clients table
+    const tbody = document.getElementById('clients-table');
+    data.clients.forEach(c => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${c.name}</td><td>${c.contact}</td><td>${c.last}</td><td>${c.balance}</td>`;
+      tbody.appendChild(tr);
+    });
+
+    function openNew(){
+      alert('Aggiungi nuovo elemento — qui puoi collegare un form o aprire una modale.');
+    }
+
+    // basic keyboard search
+    document.getElementById('q').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      tbody.querySelectorAll('tr').forEach(tr => {
+        tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>
